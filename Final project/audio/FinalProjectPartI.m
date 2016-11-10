@@ -1,6 +1,7 @@
 %%%%%%%%%%%%%Final project part I From the wav file to the psychoacoustic
 %%%%%%%%%%%%%features
-[song,fs] = audioread('track201-classical.wav');
+
+[song,fs] = audioread('track463-metal.wav');
 
 %%%% audio files are sampled at fs = 11025 Hz
 %fs = 11025; %Or 22050 Hz
@@ -25,6 +26,13 @@ end
     
 %%%%%%%Take 20log10 of your output,
 %use flipud 
+
 output = flipud(output);
 output = 20*log10(output);
+
+figure
 imagesc(output);
+xlabel('Frequency');
+ylabel('Decibel intensity');
+colorbar
+
