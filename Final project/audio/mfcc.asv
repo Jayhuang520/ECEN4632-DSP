@@ -16,10 +16,6 @@ function [ mfcc ] = mfcc( wav,fs,fftSize, window )
 hopSize = fftSize/2;
 nBanks = 40;
 
-%%%%%%--------------initialization----------------------
-mfcc = zeros(40,517);
-wavExtract = zeros(1,517);
-
 % minimum and maximum frequencies for the analysis
 fMin = 20;
 fMax = fs/2;
@@ -80,14 +76,9 @@ axis([0 fRight(nBanks) 0 max(freqResponse(:))]);title('FilterbankS');
 %_________________________________________________________
 %
 % YOU NEED TO ADD YOUR CODE HERE
-
-%%%% write matlab function that extract T seconds of music from a given
-%%%% track. T = 24 seconds from the middle of each track and compute a
-%%%% matrix of mfcc  24*11500/512 = 518.
-mid = floor(size(wav)/2);
-wavExtract(1,:) = wav(mid-258:mid+258);
-for j = 1:nBanks
-    mfcc(i,:) = fft(wavExtract(1,:).*freqResponse(i,:));
+for n = 1:256:
 end
+
+
 end
 
