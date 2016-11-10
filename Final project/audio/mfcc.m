@@ -1,4 +1,4 @@
-function [ mfcc ] = mfcc( wav,fs,fftSize, window )
+function [ output ] = mfcc( wav,fs,fftSize, window )
 %   MFCC(Mel-frequency cepstral coefficients)
 %
 %USAGE
@@ -14,7 +14,6 @@ function [ mfcc ] = mfcc( wav,fs,fftSize, window )
 %  mfcc (matrix size) coefficients x nFrames
 %  harewired parameters
 
-nf = floor(24*11025/256);
 
 hopSize = fftSize/2;
 nBanks = 40;
@@ -70,20 +69,19 @@ for i=1:nBanks
 end
 %
 % plot a pretty figure of the frequency response of the filters.
-figure;set(gca,'fontsize',14);
-semilogx(linearFreq,freqResponse');
-axis([0 fRight(nBanks) 0 max(freqResponse(:))]);title('FilterbankS');
+% figure;set(gca,'fontsize',14);
+% semilogx(linearFreq,freqResponse');
+% axis([0 fRight(nBanks) 0 max(freqResponse(:))]);title('FilterbankS');
 %_________________________________________________________
 %
 % PART 2 : processing of the audio vector In the Fourier domain.
 %_________________________________________________________
 %
 % YOU NEED TO ADD YOUR CODE HERE
-for n = 1:256:nf*256
-   xn = wav(n:n+512);
+   xn = wav(1:fftSize);
    Y = fft(xn.*window);
-   
-end
-
+   K = fftSize/2+1;
+   Xn = Y(1:K);
+   output = (abs(freqResponse*Xn)).^2;
 end
 
