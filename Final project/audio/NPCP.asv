@@ -1,0 +1,30 @@
+function [ output ] = NPCP( wav,fs,fftSize, window )
+%
+% PART 2 : processing of the audio vector In the Fourier domain.
+%_________________________________________________________
+%
+   xn = wav(1:fftSize);
+   Y = fft(xn.*window);
+   K = fftSize/2+1;
+   Xn = Y(1:K);
+   X = abs(Xn).^2;
+%--------Step 1 pick out the peak frequencies-------
+ f0 = 27.5;
+[pkt,fk] = findpeaks(X);
+%---------Step 2: Assignment of peak frequencies to 
+%---------semitones-----------------------------------  
+   Incre = size(fk);
+   for i = 1:Incre
+       sm = round(12*log2(fk(i)/f0));
+%--------Bring everything into the first octa
+       c = rem(sm,12);
+       r = 12*log2(fk/f0) - sm;
+       
+   end
+   
+%----------------Step 3:the pitch class profile:a weighted
+% --------------sum of the semitones--------------
+   PCPc = w.*X; 
+   output = PCPc./(sum(PCPc));
+end
+

@@ -1,35 +1,42 @@
+clear all;close all;clc;
 %%%%%%%%%%%%%Final project part I From the wav file to the psychoacoustic
 %%%%%%%%%%%%%features
 %%--------------use dir **/*.wav to list all the wav file in the directory
-tic
+%tic
 filename = {'track201-classical.wav','track204-classical.wav',...
     'track370-electronic.wav','track396-electronic.wav',...
     'track437-jazz.wav','track439-jazz.wav',...
     'track463-metal.wav','track492-metal.wav',...
     'track547-rock.wav','track550-rock.wav',...
     'track707-world.wav','track729-world.wav'};
-    
- for fileIndex = 1:12
-    [song,fs] = audioread(char(filename(fileIndex)));
-
+% filename = {'piano-chrom.wav'};    
+  for fileIndex = 1:12
+     [song,fs] = audioread(char(filename(fileIndex)));
+%     [song,fs] = audioread(char(filename));
     %%%% audio files are sampled at fs = 11025 Hz
-    %fs = 11025; %Or 22050 Hz
-    %%%%%%%%%%%since the sampling rate is 11025, the FFT size is twice the
-    %%%%%%%%%%%sampling rate, which its 2 * fs
+    %sound(song,fs)
 
     %%%%%%--------------initialization----------------------
-    SongLength = length(song);
-    Mid = floor(SongLength/2);
-    %%%%Convert it to time
-    xn = song(Mid:Mid+24*fs-1);
-    w = hann(512);
-    fftsize = 512; %%%%Size of fft
-    nf = floor(24*11025/256);
+     SongLength = length(song);
+     Mid = floor(SongLength/2);
+    %%%%-----------------------Part 1-------------------------------
+    %% Extract 24 seconds of music from a given track.
+%      xn = song(Mid:Mid+12*fs-1);
+    w = hann(2048);
+    fftsize = 2048; %%%%Size of fft
+    nf = floor(12*11025/fftsize/2);
     index = 1;
-    %%%%%% nbank = 40
-    output = zeros(40,nf);
-    for n = 1:256:(nf-1)*256
-        output(:,index) = mfcc(xn(n:n+fftsize-1),fs,fftsize,w);
+  %%%%%% nbank = 40
+%     output = zeros(40,nf);
+%----------Part I of the project-------------------
+%     for n = 1:256:(nf-1)*256
+%         output(:,index) = mfcc(xn(n:n+fftsize-1),fs,fftsize,w);
+%         index = index + 1;
+%     end
+%----------end of part I of the project-------------
+output = zeros(12,nf);
+    for n = 1:fftsize/2:floor(length(song)-2048)
+        output(:,index) = NPCP(song(n:n+fftsize-1),fs,fftsize,w);
         index = index + 1;
     end
 
@@ -37,15 +44,17 @@ filename = {'track201-classical.wav','track204-classical.wav',...
     %use flipud 
 
     %output = flipud(output);
-    output = 20*log10(output);
+    output = 20*log10(output/max(max(song)));
 
     figure
     imagesc(output);
     title(filename(fileIndex));
     set(gca,'YDir','normal');
+    set(gca,'YTick',[1:12]);
+    set(gca,'YTickLabel',({'A';'A#';'B';'C';'C#';'D';'D#';'E';'F';'F#';'G';'G#'}))
     xlabel('Frames');
     ylabel('Filter Bank');
     colormap jet
     colorbar
- end
-toc
+  end
+%toc
